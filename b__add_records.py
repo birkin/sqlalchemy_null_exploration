@@ -1,10 +1,14 @@
-from models_sqlalchemy import Base, Citation, CitationField, make_session, engine
+import models_sqlalchemy
+from models_sqlalchemy import Citation, CitationField
+
+# from models_sqlalchemy import Base, Citation, CitationField, engine
 
 # Create the database tables based on the models if they don't already exist
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
 # Create a new session
-session = make_session()
+# session = make_session()
+session = models_sqlalchemy.make_session()
 
 # Add two Citation records
 citation1 = Citation(comments='Dummy comment 1', acknowledgements='Dummy acknowledgement 1')
