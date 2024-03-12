@@ -1,3 +1,8 @@
+"""
+Adds two Citation records, and for each of those, adds two CitationField records.
+Can be run multiple times to add more records.
+"""
+
 import models_sqlalchemy
 from models_sqlalchemy import Citation, CitationField
 
