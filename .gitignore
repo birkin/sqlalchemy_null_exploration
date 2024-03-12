@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 *cpython*
 *pycache*
+models_sqlalchemy.cpython-38.pyc
