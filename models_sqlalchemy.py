@@ -69,6 +69,7 @@ class CitationField( Base ):
     citation = relationship(Citation,
         primaryjoin=(citation_id == Citation.id),
         backref='citation_data')
+    field_data = Column(String(255))
 
 
 # class CitationField(Base):
