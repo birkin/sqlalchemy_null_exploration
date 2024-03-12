@@ -1,6 +1,11 @@
 """
 This script will automatically create the database, and tables, defined in the models_sqlalchemy.py file.
 I had already created a `DBs` folder at the parent-directory of this .git directory.
+
+Usage:
+- cd /to/this/git-directory/
+- source ../env/bin/activate
+- python ./a__initialize_db.py
 """
 
 from models_sqlalchemy import Base, initialize_engine_session

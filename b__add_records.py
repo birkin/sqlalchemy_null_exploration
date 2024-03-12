@@ -1,6 +1,11 @@
 """
 Adds two Citation records, and for each of those, adds two CitationField records.
 Can be run multiple times to add more records.
+
+Usage:
+- cd /to/this/git-directory/
+- source ../env/bin/activate
+- python ./b__add_records.py
 """
 
 import models_sqlalchemy
