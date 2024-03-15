@@ -21,10 +21,29 @@ Plan to replicate problem:
   <https://github.com/Brown-University-Library/disa_dj_project/blob/41d964d2bbece86cc2649ef6042a07e535fc4d7b/disa_app/lib/v_data_document_manager.py#L145-L157>
 """
 
-
-def run_code():
-    print("Running code")
+import argparse
 
 
-if __name__ == "__main__":
-    run_code()
+def list_citations():
+    print( 'will list citations' )
+    pass
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser( description='Process some arguments.' )
+    parser.add_argument( '--arg', type=str, help='Argument to decide which function to call' )
+    
+    args = parser.parse_args()
+    
+    if args.arg == 'list_citations':
+        list_citations()
+    elif args.arg == 'bar':
+        # bar()
+        pass
+    else:
+        print(f'No function matches the argument: {args.arg}')
+
+
+
+
+    # cfield = models_sqlalchemy.CitationField( citation_id='foo', field_data='bar' )
