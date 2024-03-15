@@ -131,6 +131,13 @@ def update_data_02():
             break
     return
 
+def update_data_03():
+    """ TODO: mimic the flow in the assumed problem link at the top better.
+        Instantiate a citation-field-object , link it to the existing citation, and then session.add() it.
+        Maybe do that twice, _then_ session.commit().
+    """
+    pass
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser( description='Process some arguments.' )
