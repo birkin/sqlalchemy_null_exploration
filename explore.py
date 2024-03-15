@@ -77,7 +77,7 @@ def list_citations():
             log.debug( f'citation_field_obj.field_data, ``{citation_field_obj.field_data}``' )
     pass
 
-def update_data():
+def update_data_01():
     """ Updates an existing citation_field entry.
         Does _not_ create new null values. """
     citation = session.query(Citation).filter_by(id=1).first()
@@ -98,6 +98,40 @@ def update_data():
             break
     return
 
+
+def update_data_02():
+    """ Updates an existing citation_field entry via a session.add() approach, mimic-ing the flow in the 
+            assumed problem link at the top.
+        Explanation (chatgpt4)...
+            The session.add() method in SQLAlchemy is used to add an instance of a model to the session. 
+            Its purpose is to queue the instance for insertion or update in the database when session.commit() is called. 
+            However, when working with instances that are already part of a session, 
+            especially those retrieved through a query, SQLAlchemy's session automatically tracks changes to those instances. 
+            This is why you might not see an immediate difference in behavior whether you use session.add() explicitly 
+            in your scenarios or not.
+        Does _not_ create new null values; acts the same as update_data_01.
+        """
+    citation = session.query(Citation).filter_by(id=1).first()
+    log.debug( f'citation, ``{citation}``' )
+    citation_data = citation.citation_data
+    log.debug( f'citation_data, ``{citation_data}``' )
+    for citation_field_obj in citation_data:
+        log.debug( f'citation_field_obj, ``{citation_field_obj}``' )
+        log.debug( f'citation_field_obj.id, ``{citation_field_obj.id}``' )
+        log.debug( f'citation_field_obj.citation_id, ``{citation_field_obj.citation_id}``' )
+        log.debug( f'citation_field_obj.field_data, ``{citation_field_obj.field_data}``' )
+        if citation_field_obj.id == 1:
+            log.debug( 'updating data' )
+            random_id = random.randint( 1000, 9999 )
+            log.debug( f'random_id, ``{random_id}``' )
+            citation_field_obj.field_data = f'newdata_{random_id}'
+            session.add( citation_field_obj )
+            session.add( citation )
+            session.commit()
+            break
+    return
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser( description='Process some arguments.' )
     parser.add_argument( '--arg', required=True, type=str, help='Argument to decide which function to call' )
@@ -107,8 +141,9 @@ if __name__ == '__main__':
     ## handle args ------------------------------
     if args.arg == 'list_citations':
         list_citations()
-    elif args.arg == 'update_data':
-        update_data()
-        pass
+    elif args.arg == 'update_data_01':
+        update_data_01()
+    elif args.arg == 'update_data_02':
+        update_data_02()
     else:
         log.warning( f'No function matches the argument: {args.arg}' )
