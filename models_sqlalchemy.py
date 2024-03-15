@@ -14,7 +14,7 @@ Base = declarative_base()   # base class contains a MetaData object where newly 
                             # gaining the ability to interact with the database through the SQLAlchemy session interface.
 
 
-DISA_DJ__DATABASE_URL="sqlite:///../DBs/DISA.sqlite"
+DATABASE_URL="sqlite:///../DBs/DISA.sqlite"
 
 
 ## session configuration --------------------------------------------
@@ -31,8 +31,19 @@ ScopedSession = None
 def initialize_engine_session():
     global engine, ScopedSession
     if engine is None:
-        # engine = create_engine( settings_app.DB_URL, echo=True )
-        engine = create_engine( DISA_DJ__DATABASE_URL, echo=True )
+        engine = create_engine( DATABASE_URL, echo=True )
+
+        ## silence sqlalchemy logging; unsuccessful -- TODO: figure out how to silence sqlalchemy logging
+        import logging
+        logging.getLogger('sqlalchemy.engine.base.Engine').setLevel( logging.WARNING )
+        logging.getLogger('sqlalchemy.engine.base').setLevel( logging.WARNING )
+        logging.getLogger('sqlalchemy.engine').setLevel( logging.WARNING )
+        logging.getLogger('sqlalchemy.orm.unitofwork').setLevel( logging.WARNING )
+        logging.getLogger('sqlalchemy.orm').setLevel( logging.WARNING )
+        logging.getLogger('sqlalchemy.pool.impl').setLevel( logging.WARNING )
+        logging.getLogger('sqlalchemy.pool').setLevel( logging.WARNING )
+        logging.getLogger('sqlalchemy').setLevel( logging.WARNING )
+        
         session_factory = sessionmaker( bind=engine )
         ScopedSession = scoped_session( session_factory )
         return engine
