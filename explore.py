@@ -31,7 +31,7 @@ logging.getLogger('sqlalchemy.engine.base').setLevel( logging.WARNING )
 logging.getLogger('sqlalchemy.engine').setLevel( logging.WARNING )
 logging.getLogger('sqlalchemy').setLevel( logging.WARNING )
 
-import argparse, os
+import argparse, os, random
 import models_sqlalchemy
 from models_sqlalchemy import Citation, CitationField
 
@@ -75,36 +75,40 @@ def list_citations():
             log.debug( f'citation_field_obj.id, ``{citation_field_obj.id}``' )
             log.debug( f'citation_field_obj.citation_id, ``{citation_field_obj.citation_id}``' )
             log.debug( f'citation_field_obj.field_data, ``{citation_field_obj.field_data}``' )
-        # log.debug( f'citation.citation_data, ``{citation.citation_data}``' )
     pass
 
+def update_data():
+    """ Updates an existing citation_field entry.
+        Does _not_ create new null values. """
+    citation = session.query(Citation).filter_by(id=1).first()
+    log.debug( f'citation, ``{citation}``' )
+    citation_data = citation.citation_data
+    log.debug( f'citation_data, ``{citation_data}``' )
+    for citation_field_obj in citation_data:
+        log.debug( f'citation_field_obj, ``{citation_field_obj}``' )
+        log.debug( f'citation_field_obj.id, ``{citation_field_obj.id}``' )
+        log.debug( f'citation_field_obj.citation_id, ``{citation_field_obj.citation_id}``' )
+        log.debug( f'citation_field_obj.field_data, ``{citation_field_obj.field_data}``' )
+        if citation_field_obj.id == 1:
+            log.debug( 'updating data' )
+            random_id = random.randint( 1000, 9999 )
+            log.debug( f'random_id, ``{random_id}``' )
+            citation_field_obj.field_data = f'newdata_{random_id}'
+            session.commit()
+            break
+    return
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser( description='Process some arguments.' )
     parser.add_argument( '--arg', required=True, type=str, help='Argument to decide which function to call' )
-    
+    ## list args -----------------------------------
     args = parser.parse_args()
     log.debug( f'args, ``{args}``' )
-    
+    ## handle args ------------------------------
     if args.arg == 'list_citations':
         list_citations()
-    elif args.arg == 'bar':
-        # bar()
+    elif args.arg == 'update_data':
+        update_data()
         pass
     else:
-        print(f'No function matches the argument: {args.arg}')
-
-
-
-
-    # cfield = models_sqlalchemy.CitationField( citation_id='foo', field_data='bar' )
-
-
-# ## silence sqlalchemy logging
-# """
-# This is one of the earliest files loaded, so it's a good place to silence the sqlalchemy logging.
-# """
-# import logging
-# logging.getLogger('sqlalchemy.engine.base.Engine').setLevel( logging.WARNING )
-# logging.getLogger('sqlalchemy.engine.base').setLevel( logging.WARNING )
-# logging.getLogger('sqlalchemy.engine').setLevel( logging.WARNING )
+        log.warning( f'No function matches the argument: {args.arg}' )
