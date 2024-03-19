@@ -136,7 +136,27 @@ def update_data_03():
         Instantiate a citation-field-object , link it to the existing citation, and then session.add() it.
         Maybe do that twice, _then_ session.commit().
     """
-    pass
+    # for i in range(2):
+    #     cfield = models_alch.CitationField(
+    #         citation_id=cite.id,
+    #         field_id=zfield.id, 
+    #         field_data=val
+    #         )
+    #     session.add(cfield)
+    # session.add( cite )
+    # session.commit()
+    citation_obj = session.query(Citation).filter_by(id=1).first()
+    for i in range(2):
+        random_num = random.randint( 1000, 9999 )
+        citation_field_obj = CitationField(
+            citation_id=1,
+            field_data=f'somenewdata_{random_num}' 
+            )
+        session.add( citation_field_obj )
+    session.add( citation_obj )
+    session.commit()
+    log.info( 'check sqlite!' )
+    return
 
 
 if __name__ == '__main__':
@@ -152,5 +172,7 @@ if __name__ == '__main__':
         update_data_01()
     elif args.arg == 'update_data_02':
         update_data_02()
+    elif args.arg == 'update_data_03':
+        update_data_03()
     else:
         log.warning( f'No function matches the argument: {args.arg}' )
