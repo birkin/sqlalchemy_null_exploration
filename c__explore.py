@@ -82,7 +82,7 @@ def list_locations():
         #     log.debug( f'loc_ref, ``{loc_ref}``' )
         #     log.debug( f'loc_ref.id, ``{loc_ref.id}``' )
         #     log.debug( f'loc_ref.reference_id, ``{loc_ref.reference_id}``' )
-        log.debug( 'END OF REFERENCE_LOCATION OUTPUT' )
+    log.debug( 'END OF REFERENCE_LOCATION OUTPUT' )
 
     log.debug( '\n\nSTART OF LOCATION OUTPUT ------------------------' )
     locations = session.query(Location).all()
@@ -96,7 +96,7 @@ def list_locations():
             log.debug( f'loc_ref.id, ``{loc_ref.id}``' )
             log.debug( f'loc_ref.reference_id, ``{loc_ref.reference_id}``' )
             log.debug( f'loc_ref.reference.transcription, ``{loc_ref.reference.transcription}``' )
-        log.debug( 'END OF LOCATION OUTPUT' )
+    log.debug( 'END OF LOCATION OUTPUT' )
 
     log.debug( '\n\nSTART OF REFERENCE OUTPUT ------------------------' )
     references = session.query(Reference).all()
@@ -112,7 +112,7 @@ def list_locations():
             # log.debug( f'ref_loc.__dict__, ``{ref_loc.__dict__}``' )  # works
             # log.debug( f'ref_loc.location, ``{ref_loc.location}``' )  # works; yields object
             log.debug( f'ref_loc.location.name, ``{ref_loc.location.name}``' )
-        log.debug( 'END OF REFERENCE OUTPUT' )
+    log.debug( 'END OF REFERENCE OUTPUT' )
         
     pass
 
