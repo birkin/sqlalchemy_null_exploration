@@ -1,30 +1,15 @@
 """
-Nothing here yet.
+Updates records in an effort to replicate the db NULL problem -- then figure out a solution.
 
-This is where I'm going to try to replicate both the NULL problem, and figure out a solution.
+Started updating citation-data -- but wasn't able to recreate the NULL problem. 
 
-In the webapp, I see lots of entries like:
-
-```
-INSERT INTO `4_citation_fields` VALUES (181031,NULL,66,'2');
-```
-
-So that's:
-- setting id to 181031
-- setting citation_id to NULL   # THIS IS THE PROBLEM
-- setting field_id to 66        # that's the zotero-field-id, not relevant here
-- setting field_data to '2'
-
-Plan to replicate problem:
-- try to update the citation-field entries for a given citation.
-- here's where I think the problem lies in the webapp (for citation-field):
-  <https://github.com/Brown-University-Library/disa_dj_project/blob/41d964d2bbece86cc2649ef6042a07e535fc4d7b/disa_app/lib/v_data_document_manager.py#L145-L157>
+The problem is most evident in location-data -- so trying that now.
 """
 
 
 ## setup ------------------------------------------------------------
 
-## not working; sigh!
+## eliminating sqlalchemy-logging not working; sigh!
 import logging
 logging.getLogger('sqlalchemy.engine.base.Engine').setLevel( logging.WARNING )
 logging.getLogger('sqlalchemy.engine.base').setLevel( logging.WARNING )
@@ -34,6 +19,7 @@ logging.getLogger('sqlalchemy').setLevel( logging.WARNING )
 import argparse, os, random
 import models_sqlalchemy
 from models_sqlalchemy import Citation, CitationField
+from models_sqlalchemy import Reference, Location, ReferenceLocation
 
 ## trying again; nope!
 logging.getLogger('sqlalchemy.engine.base.Engine').setLevel( logging.WARNING )
@@ -77,7 +63,64 @@ def list_citations():
             log.debug( f'citation_field_obj.field_data, ``{citation_field_obj.field_data}``' )
     pass
 
-def update_data_01():
+
+def list_locations():
+    ## list locations
+    log.debug( '\n\nSTART OF REFERENCE_LOCATION OUTPUT --------------' )
+    reference_locations = session.query(ReferenceLocation).all()
+    for reference_location in reference_locations:
+        log.debug( f'\n\nreference_location, ``{reference_location}``' )
+        log.debug( f'reference_location.id, ``{reference_location.id}``' )
+        log.debug( f'reference_location.reference_id, ``{reference_location.reference_id}``' )
+        log.debug( f'reference_location.location_id, ``{reference_location.location_id}``' )
+        log.debug( f'reference_location.location, ``{reference_location.location}``' )
+        log.debug( f'reference_location.location.id, ``{reference_location.location.id}``' )
+        log.debug( f'reference_location.location.name, ``{reference_location.location.name}``' )
+        # log.debug( f'reference_location.references, ``{reference_location.references}``' )  # does not work
+        # log.debug( f'reference_location.location.references, ``{reference_location.location.references}``' )  # does work, showing ReferenceLogation objects
+        # for loc_ref in reference_location.location.references:
+        #     log.debug( f'loc_ref, ``{loc_ref}``' )
+        #     log.debug( f'loc_ref.id, ``{loc_ref.id}``' )
+        #     log.debug( f'loc_ref.reference_id, ``{loc_ref.reference_id}``' )
+        log.debug( 'END OF REFERENCE_LOCATION OUTPUT' )
+
+    log.debug( '\n\nSTART OF LOCATION OUTPUT ------------------------' )
+    locations = session.query(Location).all()
+    for location in locations:
+        log.debug( f'\n\nlocation, ``{location}``' )
+        log.debug( f'location.id, ``{location.id}``' )
+        log.debug( f'location.name, ``{location.name}``' )
+        log.debug( f'location.references, ``{location.references}``' )
+        for loc_ref in location.references:
+            log.debug( f'loc_ref, ``{loc_ref}``' )
+            log.debug( f'loc_ref.id, ``{loc_ref.id}``' )
+            log.debug( f'loc_ref.reference_id, ``{loc_ref.reference_id}``' )
+            log.debug( f'loc_ref.reference.transcription, ``{loc_ref.reference.transcription}``' )
+        log.debug( 'END OF LOCATION OUTPUT' )
+
+    log.debug( '\n\nSTART OF REFERENCE OUTPUT ------------------------' )
+    references = session.query(Reference).all()
+    for reference in references:
+        log.debug( f'\n\nreference, ``{reference}``' )
+        log.debug( f'reference.id, ``{reference.id}``' )
+        log.debug( f'reference.transcription, ``{reference.transcription}``' )
+        log.debug( f'reference.locations, ``{reference.locations}``' )
+        for ref_loc in reference.locations:
+            log.debug( f'ref_loc, ``{ref_loc}``' )
+            log.debug( f'ref_loc.id, ``{ref_loc.id}``' )
+            log.debug( f'ref_loc.location_id, ``{ref_loc.location_id}``' )
+            # log.debug( f'ref_loc.__dict__, ``{ref_loc.__dict__}``' )  # works
+            # log.debug( f'ref_loc.location, ``{ref_loc.location}``' )  # works; yields object
+            log.debug( f'ref_loc.location.name, ``{ref_loc.location.name}``' )
+        log.debug( 'END OF REFERENCE OUTPUT' )
+        
+    pass
+
+
+
+
+
+def update_citation_data_01():
     """ Updates an existing citation_field entry.
         Does _not_ create new null values. """
     citation = session.query(Citation).filter_by(id=1).first()
@@ -99,7 +142,7 @@ def update_data_01():
     return
 
 
-def update_data_02():
+def update_citation_data_02():
     """ Updates an existing citation_field entry via a session.add() approach, mimic-ing the flow in the 
             assumed problem link at the top.
         Explanation (chatgpt4)...
@@ -131,7 +174,7 @@ def update_data_02():
             break
     return
 
-def update_data_03():
+def update_citation_data_03():
     """ TODO: mimic the flow in the assumed problem link at the top better.
         Instantiate a citation-field-object , link it to the existing citation, and then session.add() it.
         Maybe do that twice, _then_ session.commit().
@@ -168,11 +211,13 @@ if __name__ == '__main__':
     ## handle args ------------------------------
     if args.arg == 'list_citations':
         list_citations()
-    elif args.arg == 'update_data_01':
-        update_data_01()
-    elif args.arg == 'update_data_02':
-        update_data_02()
-    elif args.arg == 'update_data_03':
-        update_data_03()
+    elif args.arg == 'list_locations':
+        list_locations()
+    elif args.arg == 'update_citation_data_01':
+        update_citation_data_01()
+    elif args.arg == 'update_citation_data_02':
+        update_citation_data_02()
+    elif args.arg == 'update_citation_data_03':
+        update_citation_data_03()
     else:
         log.warning( f'No function matches the argument: {args.arg}' )
