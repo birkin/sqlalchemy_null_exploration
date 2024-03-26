@@ -31,9 +31,19 @@ def add_location_data():
     ## add a Reference record
     reference1 = Reference( 
         id='1', 
-        transcription='the transcription' 
+        transcription='the transcription 01' 
         )
     session.add(reference1)
+
+    ## commit reference so id is available
+    session.commit()
+
+    ## add a second Reference record
+    reference2 = Reference( 
+        id='2', 
+        transcription='the transcription 02' 
+        )
+    session.add(reference2)
 
     ## commit reference so id is available
     session.commit()
@@ -48,16 +58,41 @@ def add_location_data():
     ## commit location so id is available
     session.commit()
 
-    # Add one ReferenceLocation record
+    ## add a second Location record
+    location2 = Location( 
+        id='2', 
+        name='Location02' 
+        )
+    session.add(location2)
+
+    ## commit location so id is available
+    session.commit()
+
+    # Add one ReferenceLocation record: 1st reference, 1st location
     reference_location1 = ReferenceLocation( 
         id='1',
         reference_id=reference1.id, 
         location_id=location1.id 
         )
-
     session.add(reference_location1)
+    session.commit()
 
-    ## Commit changes
+    # Add a second ReferenceLocation record: 2nd reference, 2nd location
+    reference_location2 = ReferenceLocation( 
+        id='2',
+        reference_id=reference2.id, 
+        location_id=location2.id 
+        )
+    session.add(reference_location2)
+    session.commit()
+
+    # Add a third ReferenceLocation record: 1st reference, 2nd location
+    reference_location3 = ReferenceLocation( 
+        id='3',
+        reference_id=reference1.id, 
+        location_id=location2.id 
+        )
+    session.add(reference_location2)
     session.commit()
 
     ## Close session
